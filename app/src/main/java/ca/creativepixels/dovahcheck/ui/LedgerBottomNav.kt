@@ -11,6 +11,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.sp
 
 enum class LedgerNavItem {
     HOME,
@@ -34,31 +35,41 @@ fun LedgerBottomNav(
             selected = selected == LedgerNavItem.HOME,
             onClick = onHome,
             icon = { Icon(Icons.Outlined.Home, contentDescription = null) },
-            label = { Text("Home") }
+            label = { NavLabel("Home") }
         )
         NavigationBarItem(
             selected = selected == LedgerNavItem.QUESTS,
             onClick = onQuests,
             icon = { Icon(Icons.Outlined.ListAlt, contentDescription = null) },
-            label = { Text("Quests") }
+            label = { NavLabel("Quests") }
         )
         NavigationBarItem(
             selected = selected == LedgerNavItem.HOLDS,
             onClick = onHolds,
             icon = { Icon(Icons.Outlined.Map, contentDescription = null) },
-            label = { Text("Holds") }
+            label = { NavLabel("Holds") }
         )
         NavigationBarItem(
             selected = selected == LedgerNavItem.COLLECTIONS,
             onClick = onCollections,
             icon = { Icon(Icons.Outlined.CollectionsBookmark, contentDescription = null) },
-            label = { Text("Collections") }
+            label = { NavLabel("Collections") }
         )
         NavigationBarItem(
             selected = selected == LedgerNavItem.MORE,
             onClick = onMore,
             icon = { Icon(Icons.Outlined.MoreHoriz, contentDescription = null) },
-            label = { Text("More") }
+            label = { NavLabel("More") }
         )
     }
+}
+
+@Composable
+private fun NavLabel(text: String) {
+    Text(
+        text = text,
+        maxLines = 1,
+        softWrap = false,
+        fontSize = 9.sp
+    )
 }

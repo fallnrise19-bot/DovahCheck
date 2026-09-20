@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import ca.creativepixels.dovahcheck.data.CharacterPortraitStore
 import ca.creativepixels.dovahcheck.data.LocalPlayerProgressRepository
 import ca.creativepixels.dovahcheck.data.QuestCatalogRepository
 import ca.creativepixels.dovahcheck.data.model.CharacterProfile
@@ -376,7 +377,28 @@ fun DovahCheckApp() {
                         )
                     },
                     onCollections = { screen = AppScreen.Collections },
-                    onCharacters = { screen = AppScreen.Characters }
+                    onCharacters = { screen = AppScreen.Characters },
+                    onPortraitSelected = { uri ->
+                        scope.launch {
+                            val currentCharacter = activeCharacter ?: return@launch
+                            val portraitPath = withContext(Dispatchers.IO) {
+                                CharacterPortraitStore.savePortrait(
+                                    context = context,
+                                    characterId = currentCharacter.id,
+                                    sourceUri = uri
+                                )
+                            }
+                            if (portraitPath != null) {
+                                val updatedCharacter = playerRepository.updateCharacterPortrait(
+                                    characterId = currentCharacter.id,
+                                    portraitPath = portraitPath
+                                )
+                                if (updatedCharacter != null) {
+                                    refreshPlayerState(updatedCharacter)
+                                }
+                            }
+                        }
+                    }
                 )
             }
         }

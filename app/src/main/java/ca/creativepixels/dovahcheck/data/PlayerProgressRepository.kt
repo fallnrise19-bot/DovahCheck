@@ -10,6 +10,7 @@ interface PlayerProgressRepository {
     suspend fun activeCharacter(): CharacterProfile?
     suspend fun createCharacter(name: String, contentProfileName: String): CharacterProfile
     suspend fun selectCharacter(characterId: String)
+    suspend fun updateCharacterPortrait(characterId: String, portraitPath: String?): CharacterProfile?
     suspend fun questProgress(characterId: String): List<QuestProgress>
     suspend fun setQuestState(characterId: String, questKey: String, state: QuestState)
     suspend fun collectionProgress(characterId: String, collectionKey: String): List<CollectionProgress>
