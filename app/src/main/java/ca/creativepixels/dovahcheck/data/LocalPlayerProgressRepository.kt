@@ -65,6 +65,23 @@ class LocalPlayerProgressRepository(
         save(current.copy(activeCharacterId = characterId))
     }
 
+    override suspend fun updateCharacterPortrait(
+        characterId: String,
+        portraitPath: String?
+    ): CharacterProfile? {
+        val current = load()
+        val existing = current.characters.firstOrNull { it.id == characterId } ?: return null
+        val updatedCharacter = existing.copy(portraitPath = portraitPath)
+        save(
+            current.copy(
+                characters = current.characters.map {
+                    if (it.id == characterId) updatedCharacter else it
+                }
+            )
+        )
+        return updatedCharacter
+    }
+
     override suspend fun questProgress(characterId: String): List<QuestProgress> =
         load().progress.filter { it.characterId == characterId }
 
