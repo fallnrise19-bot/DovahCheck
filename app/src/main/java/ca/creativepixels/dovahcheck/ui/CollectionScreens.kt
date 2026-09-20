@@ -44,7 +44,11 @@ fun CollectionsScreen(
     shouts: List<ShoutRecord>,
     collectedWordKeys: Set<String>,
     onBack: () -> Unit,
-    onOpenShouts: () -> Unit
+    onOpenShouts: () -> Unit,
+    onHome: () -> Unit,
+    onQuests: () -> Unit,
+    onHolds: () -> Unit,
+    onMore: () -> Unit
 ) {
     val theme = themeForCategory("collections")
     val wordCount = shouts.sumOf { it.words.size }
@@ -64,6 +68,16 @@ fun CollectionsScreen(
                         Icon(Icons.Outlined.ArrowBack, contentDescription = "Back")
                     }
                 }
+            )
+        },
+        bottomBar = {
+            LedgerBottomNav(
+                selected = LedgerNavItem.COLLECTIONS,
+                onHome = onHome,
+                onQuests = onQuests,
+                onHolds = onHolds,
+                onCollections = {},
+                onMore = onMore
             )
         }
     ) { padding ->
