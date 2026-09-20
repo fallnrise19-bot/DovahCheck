@@ -97,7 +97,7 @@ fun DovahCheckApp() {
     }
 
     val filteredQuests = quests.orEmpty().filterForProfile(activeCharacter?.contentProfileName)
-    val filteredShouts = shouts.filterForProfile(activeCharacter?.contentProfileName)
+    val filteredShouts = shouts.filterShoutsForProfile(activeCharacter?.contentProfileName)
 
     when {
         error != null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -310,7 +310,7 @@ private fun List<QuestRecord>.filterForProfile(profileName: String?): List<Quest
     return if (allowed == null) this else filter { (it.release ?: "Base Game") in allowed }
 }
 
-private fun List<ShoutRecord>.filterForProfile(profileName: String?): List<ShoutRecord> {
+private fun List<ShoutRecord>.filterShoutsForProfile(profileName: String?): List<ShoutRecord> {
     val allowed = when (profileName) {
         "Original Skyrim (2011)" -> setOf("Base Game")
         "Legendary Edition",
