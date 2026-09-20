@@ -82,7 +82,7 @@ enum class QuestState {
     }
 
     fun label(): String = when (this) {
-        NOT_FOUND -> "Not found"
+        NOT_FOUND -> "Not Started"
         DISCOVERED -> "Discovered"
         ACTIVE -> "Active"
         COMPLETED -> "Completed"
