@@ -52,12 +52,14 @@ data class ContentProfile(
     val recommendedUse: String? = null
 )
 
+@Serializable
 data class CharacterProfile(
     val id: String,
     val name: String,
     val contentProfileName: String
 )
 
+@Serializable
 data class QuestProgress(
     val characterId: String,
     val questKey: String,
@@ -65,9 +67,31 @@ data class QuestProgress(
     val completedIterations: Int = 0
 )
 
+@Serializable
 enum class QuestState {
     NOT_FOUND,
     DISCOVERED,
     ACTIVE,
-    COMPLETED
+    COMPLETED;
+
+    fun next(): QuestState = when (this) {
+        NOT_FOUND -> DISCOVERED
+        DISCOVERED -> ACTIVE
+        ACTIVE -> COMPLETED
+        COMPLETED -> NOT_FOUND
+    }
+
+    fun label(): String = when (this) {
+        NOT_FOUND -> "Not found"
+        DISCOVERED -> "Discovered"
+        ACTIVE -> "Active"
+        COMPLETED -> "Completed"
+    }
 }
+
+@Serializable
+data class PlayerStateStore(
+    val activeCharacterId: String? = null,
+    val characters: List<CharacterProfile> = emptyList(),
+    val progress: List<QuestProgress> = emptyList()
+)
