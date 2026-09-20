@@ -29,7 +29,14 @@ private sealed interface AppScreen {
     data object Home : AppScreen
     data object Characters : AppScreen
     data object CreateCharacter : AppScreen
-    data class Section(val release: String, val section: String) : AppScreen
+    data class Category(val id: String) : AppScreen
+    data class Release(val release: String) : AppScreen
+    data class Section(
+        val release: String,
+        val section: String,
+        val parentCategoryId: String? = null,
+        val parentRelease: String? = null
+    ) : AppScreen
 }
 
 @Composable
@@ -72,6 +79,8 @@ fun DovahCheckApp() {
         }
     }
 
+    val filteredQuests = quests.orEmpty().filterForProfile(activeCharacter?.contentProfileName)
+
     when {
         error != null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(error!!, color = MaterialTheme.colorScheme.error)
@@ -110,21 +119,73 @@ fun DovahCheckApp() {
             onBack = { screen = AppScreen.Home }
         )
 
-        screen is AppScreen.Section -> {
-            val section = screen as AppScreen.Section
-            val visibleQuests = quests.orEmpty()
-                .filterForProfile(activeCharacter?.contentProfileName)
-                .filter {
-                    (it.release ?: "Base Game") == section.release &&
-                        (it.section ?: "Other") == section.section
+        screen is AppScreen.Category -> {
+            val categoryScreen = screen as AppScreen.Category
+            val category = BrowseTaxonomy.category(categoryScreen.id)
+
+            if (category == null) {
+                screen = AppScreen.Home
+            } else {
+                CategoryBrowseScreen(
+                    category = category,
+                    quests = filteredQuests,
+                    progress = progress,
+                    onBack = { screen = AppScreen.Home },
+                    onSectionSelected = { release, section ->
+                        screen = AppScreen.Section(
+                            release = release,
+                            section = section,
+                            parentCategoryId = category.id
+                        )
+                    },
+                    onReleaseSelected = { release ->
+                        screen = AppScreen.Release(release)
+                    }
+                )
+            }
+        }
+
+        screen is AppScreen.Release -> {
+            val releaseScreen = screen as AppScreen.Release
+            ReleaseBrowseScreen(
+                release = releaseScreen.release,
+                quests = filteredQuests,
+                progress = progress,
+                onBack = { screen = AppScreen.Category("dlc") },
+                onSectionSelected = { release, section ->
+                    screen = AppScreen.Section(
+                        release = release,
+                        section = section,
+                        parentCategoryId = "dlc",
+                        parentRelease = release
+                    )
                 }
+            )
+        }
+
+        screen is AppScreen.Section -> {
+            val sectionScreen = screen as AppScreen.Section
+            val visibleQuests = filteredQuests
+                .filter {
+                    (it.release ?: "Base Game") == sectionScreen.release &&
+                        (it.section ?: "Other") == sectionScreen.section
+                }
+                .filterNot { it.isExcludedFromCompletion() }
 
             QuestSectionScreen(
-                release = section.release,
-                section = section.section,
+                release = sectionScreen.release,
+                section = sectionScreen.section,
                 quests = visibleQuests,
                 progress = progress,
-                onBack = { screen = AppScreen.Home },
+                onBack = {
+                    screen = when {
+                        sectionScreen.parentRelease != null ->
+                            AppScreen.Release(sectionScreen.parentRelease)
+                        sectionScreen.parentCategoryId != null ->
+                            AppScreen.Category(sectionScreen.parentCategoryId)
+                        else -> AppScreen.Home
+                    }
+                },
                 onStateChange = { quest, state ->
                     val character = activeCharacter
                     if (character != null) {
@@ -156,10 +217,21 @@ fun DovahCheckApp() {
             } else {
                 HomeScreen(
                     character = character,
-                    quests = quests.orEmpty().filterForProfile(character.contentProfileName),
+                    quests = filteredQuests,
                     progress = progress,
-                    onSectionSelected = { release, section ->
-                        screen = AppScreen.Section(release, section)
+                    onCategorySelected = { categoryId ->
+                        val category = BrowseTaxonomy.category(categoryId)
+                        val onlyTarget = category?.targets?.singleOrNull()
+
+                        if (onlyTarget != null && category.releaseGroups.isEmpty()) {
+                            screen = AppScreen.Section(
+                                release = onlyTarget.release,
+                                section = onlyTarget.section,
+                                parentCategoryId = category.id
+                            )
+                        } else {
+                            screen = AppScreen.Category(categoryId)
+                        }
                     },
                     onCharacters = { screen = AppScreen.Characters }
                 )

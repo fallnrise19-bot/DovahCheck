@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AutoStories
+import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.People
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Card
@@ -28,29 +29,16 @@ import ca.creativepixels.dovahcheck.data.model.CharacterProfile
 import ca.creativepixels.dovahcheck.data.model.QuestRecord
 import ca.creativepixels.dovahcheck.data.model.QuestState
 
-private data class SectionBucket(
-    val release: String,
-    val section: String,
-    val quests: List<QuestRecord>
-)
-
 @Composable
 fun HomeScreen(
     character: CharacterProfile,
     quests: List<QuestRecord>,
     progress: Map<String, QuestState>,
-    onSectionSelected: (release: String, section: String) -> Unit,
+    onCategorySelected: (String) -> Unit,
     onCharacters: () -> Unit
 ) {
-    val eligible = quests.filterNot {
-        it.completionRule?.contains("exclude", ignoreCase = true) == true
-    }
+    val eligible = quests.filterNot { it.isExcludedFromCompletion() }
     val completed = eligible.count { progress[it.internalKey] == QuestState.COMPLETED }
-
-    val sections = quests
-        .groupBy { (it.release ?: "Base Game") to (it.section ?: "Other") }
-        .map { (key, entries) -> SectionBucket(key.first, key.second, entries) }
-        .sortedWith(compareBy<SectionBucket> { it.release != "Base Game" }.thenBy { it.section })
 
     Scaffold { padding ->
         LazyColumn(
@@ -73,17 +61,18 @@ fun HomeScreen(
 
             item {
                 Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(Modifier.padding(18.dp)) {
-                        Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                            Icon(Icons.Outlined.Person, contentDescription = null)
-                            Column(Modifier.weight(1f)) {
-                                Text(character.name, style = MaterialTheme.typography.titleLarge)
-                                Text(character.contentProfileName)
-                            }
-                            TextButton(onClick = onCharacters) {
-                                Icon(Icons.Outlined.People, contentDescription = null)
-                                Text("Characters")
-                            }
+                    Row(
+                        modifier = Modifier.padding(18.dp),
+                        horizontalArrangement = Arrangement.spacedBy(14.dp)
+                    ) {
+                        Icon(Icons.Outlined.Person, contentDescription = null)
+                        Column(Modifier.weight(1f)) {
+                            Text(character.name, style = MaterialTheme.typography.titleLarge)
+                            Text(character.contentProfileName)
+                        }
+                        TextButton(onClick = onCharacters) {
+                            Icon(Icons.Outlined.People, contentDescription = null)
+                            Text("Characters")
                         }
                     }
                 }
@@ -108,37 +97,72 @@ fun HomeScreen(
             }
 
             item {
-                Spacer(Modifier.height(6.dp))
-                Text("Quest sections", style = MaterialTheme.typography.headlineSmall)
+                Spacer(Modifier.height(4.dp))
+                Text("Your Skyrim", style = MaterialTheme.typography.headlineSmall)
+                Text(
+                    "Pick a chapter instead of scrolling through the entire province.",
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
 
-            items(sections) { bucket ->
-                val sectionEligible = bucket.quests.filterNot {
-                    it.completionRule?.contains("exclude", ignoreCase = true) == true
-                }
-                val sectionCompleted = sectionEligible.count {
+            items(BrowseTaxonomy.categories) { category ->
+                val categoryQuests = category.questsForCategory(quests)
+                    .filterNot { it.isExcludedFromCompletion() }
+                val categoryCompleted = categoryQuests.count {
                     progress[it.internalKey] == QuestState.COMPLETED
                 }
+
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { onSectionSelected(bucket.release, bucket.section) }
+                        .clickable { onCategorySelected(category.id) }
                 ) {
-                    Column(Modifier.padding(16.dp)) {
-                        Text(bucket.section, style = MaterialTheme.typography.titleMedium)
-                        if (bucket.release != "Base Game") {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Column(Modifier.weight(1f)) {
+                            Text(category.title, style = MaterialTheme.typography.titleMedium)
                             Text(
-                                bucket.release,
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.primary
+                                category.subtitle,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
+                            if (category.collectionsPlaceholder) {
+                                Text(
+                                    "Tracker coming next",
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            } else {
+                                Text(
+                                    "$categoryCompleted / ${categoryQuests.size} completed",
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
-                        Text("$sectionCompleted / ${sectionEligible.size} completed")
+                        Icon(Icons.Outlined.ChevronRight, contentDescription = null)
                     }
                 }
             }
 
             item { Spacer(Modifier.height(24.dp)) }
         }
+    }
+}
+
+private fun QuestCategory.questsForCategory(quests: List<QuestRecord>): List<QuestRecord> {
+    if (collectionsPlaceholder) return emptyList()
+
+    val directTargets = targets.map { it.release to it.section }.toSet()
+    val allowedReleases = releaseGroups.toSet()
+
+    return quests.filter { quest ->
+        val release = quest.release ?: "Base Game"
+        val section = quest.section ?: "Other"
+        (release to section) in directTargets || release in allowedReleases
     }
 }
