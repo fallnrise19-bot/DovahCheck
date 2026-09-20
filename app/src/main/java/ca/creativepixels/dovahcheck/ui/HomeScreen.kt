@@ -1,6 +1,10 @@
 package ca.creativepixels.dovahcheck.ui
 
+import android.graphics.BitmapFactory
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,20 +18,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AddAPhoto
 import androidx.compose.material.icons.outlined.People
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -51,7 +61,8 @@ fun HomeScreen(
     onQuests: () -> Unit,
     onHolds: () -> Unit,
     onCollections: () -> Unit,
-    onCharacters: () -> Unit
+    onCharacters: () -> Unit,
+    onPortraitSelected: (android.net.Uri) -> Unit
 ) {
     val eligible = quests.filterNot { it.isExcludedFromCompletion() }
     val completed = eligible.count { progress[it.internalKey] == QuestState.COMPLETED }
@@ -97,7 +108,8 @@ fun HomeScreen(
                     completed = completed,
                     total = eligible.size,
                     theme = theme,
-                    onCharacters = onCharacters
+                    onCharacters = onCharacters,
+                    onPortraitSelected = onPortraitSelected
                 )
             }
 
@@ -265,8 +277,20 @@ private fun CharacterDashboardCard(
     completed: Int,
     total: Int,
     theme: LedgerVisualTheme,
-    onCharacters: () -> Unit
+    onCharacters: () -> Unit,
+    onPortraitSelected: (android.net.Uri) -> Unit
 ) {
+    val portraitLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        if (uri != null) onPortraitSelected(uri)
+    }
+
+    val portraitBitmap = remember(character.portraitPath) {
+        character.portraitPath
+            ?.let { path -> runCatching { BitmapFactory.decodeFile(path)?.asImageBitmap() }.getOrNull() }
+    }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = theme.surface),
@@ -277,30 +301,46 @@ private fun CharacterDashboardCard(
                 .fillMaxWidth()
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Box(
-                modifier = Modifier.size(84.dp),
+                modifier = Modifier
+                    .size(88.dp)
+                    .clip(CircleShape)
+                    .clickable { portraitLauncher.launch("image/*") },
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(
-                    progress = { percentage / 100f },
-                    modifier = Modifier.fillMaxSize(),
-                    color = theme.accent,
-                    trackColor = theme.surfaceDeep
-                )
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        "$percentage%",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = theme.titleColor,
-                        fontWeight = FontWeight.Bold
+                if (portraitBitmap != null) {
+                    Image(
+                        bitmap = portraitBitmap,
+                        contentDescription = character.name + " portrait",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
                     )
-                    Text(
-                        "$completed/$total",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = theme.bodyColor
-                    )
+                } else {
+                    Card(
+                        modifier = Modifier.fillMaxSize(),
+                        shape = CircleShape,
+                        colors = CardDefaults.cardColors(containerColor = theme.surfaceDeep),
+                        border = BorderStroke(1.dp, theme.accentSoft)
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                Icons.Outlined.AddAPhoto,
+                                contentDescription = "Add character image",
+                                tint = theme.accent
+                            )
+                            Text(
+                                "Add",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = theme.bodyColor
+                            )
+                        }
+                    }
                 }
             }
 
@@ -315,10 +355,34 @@ private fun CharacterDashboardCard(
                     style = MaterialTheme.typography.bodySmall,
                     color = theme.bodyColor
                 )
+                Spacer(Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        "Tracked completion",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = theme.accent
+                    )
+                    Text(
+                        "$percentage% · $completed/$total",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = theme.bodyColor
+                    )
+                }
+                LinearProgressIndicator(
+                    progress = { percentage / 100f },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 5.dp),
+                    color = theme.accent,
+                    trackColor = theme.surfaceDeep
+                )
                 Text(
-                    "Tracked completion",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = theme.accent
+                    if (portraitBitmap == null) "Tap the portrait to add your character" else "Tap portrait to change image",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = theme.bodyColor
                 )
             }
 
