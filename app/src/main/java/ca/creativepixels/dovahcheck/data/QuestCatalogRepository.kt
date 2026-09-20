@@ -3,6 +3,7 @@ package ca.creativepixels.dovahcheck.data
 import android.content.Context
 import ca.creativepixels.dovahcheck.data.model.ContentProfileFile
 import ca.creativepixels.dovahcheck.data.model.QuestCatalogFile
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 class QuestCatalogRepository(
