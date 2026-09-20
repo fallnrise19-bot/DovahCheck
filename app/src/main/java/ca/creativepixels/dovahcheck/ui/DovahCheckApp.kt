@@ -21,14 +21,19 @@ import ca.creativepixels.dovahcheck.data.model.CharacterProfile
 import ca.creativepixels.dovahcheck.data.model.ContentProfile
 import ca.creativepixels.dovahcheck.data.model.QuestRecord
 import ca.creativepixels.dovahcheck.data.model.QuestState
+import ca.creativepixels.dovahcheck.data.model.ShoutRecord
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
+private const val SHOUT_COLLECTION_KEY = "shout_words"
 
 private sealed interface AppScreen {
     data object Home : AppScreen
     data object Characters : AppScreen
     data object CreateCharacter : AppScreen
+    data object Collections : AppScreen
+    data object Shouts : AppScreen
     data class Category(val id: String) : AppScreen
     data class Release(val release: String) : AppScreen
     data class Section(
@@ -47,10 +52,12 @@ fun DovahCheckApp() {
     val scope = rememberCoroutineScope()
 
     var quests by remember { mutableStateOf<List<QuestRecord>?>(null) }
+    var shouts by remember { mutableStateOf<List<ShoutRecord>>(emptyList()) }
     var contentProfiles by remember { mutableStateOf<List<ContentProfile>>(emptyList()) }
     var characters by remember { mutableStateOf<List<CharacterProfile>>(emptyList()) }
     var activeCharacter by remember { mutableStateOf<CharacterProfile?>(null) }
     var progress by remember { mutableStateOf<Map<String, QuestState>>(emptyMap()) }
+    var collectedShoutWordKeys by remember { mutableStateOf<Set<String>>(emptySet()) }
     var screen by remember { mutableStateOf<AppScreen?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
 
@@ -58,10 +65,17 @@ fun DovahCheckApp() {
         val resolvedCharacter = character ?: playerRepository.activeCharacter()
         characters = playerRepository.characters()
         activeCharacter = resolvedCharacter
-        progress = if (resolvedCharacter == null) {
-            emptyMap()
+
+        if (resolvedCharacter == null) {
+            progress = emptyMap()
+            collectedShoutWordKeys = emptySet()
         } else {
-            playerRepository.questProgress(resolvedCharacter.id).associate { it.questKey to it.state }
+            progress = playerRepository.questProgress(resolvedCharacter.id)
+                .associate { it.questKey to it.state }
+            collectedShoutWordKeys = playerRepository
+                .collectionProgress(resolvedCharacter.id, SHOUT_COLLECTION_KEY)
+                .map { it.itemKey }
+                .toSet()
         }
     }
 
@@ -69,8 +83,11 @@ fun DovahCheckApp() {
         runCatching {
             val catalog = withContext(Dispatchers.IO) { catalogRepository.loadQuestCatalog() }
             val profiles = withContext(Dispatchers.IO) { catalogRepository.loadContentProfiles() }
+            val shoutCatalog = withContext(Dispatchers.IO) { catalogRepository.loadShoutCatalog() }
+
             quests = catalog.records
             contentProfiles = profiles.profiles
+            shouts = shoutCatalog.shouts
             refreshPlayerState()
         }.onSuccess {
             screen = if (activeCharacter == null) AppScreen.CreateCharacter else AppScreen.Home
@@ -80,6 +97,7 @@ fun DovahCheckApp() {
     }
 
     val filteredQuests = quests.orEmpty().filterForProfile(activeCharacter?.contentProfileName)
+    val filteredShouts = shouts.filterShoutsForProfile(activeCharacter?.contentProfileName)
 
     when {
         error != null -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -117,6 +135,35 @@ fun DovahCheckApp() {
             },
             onCreateNew = { screen = AppScreen.CreateCharacter },
             onBack = { screen = AppScreen.Home }
+        )
+
+        screen == AppScreen.Collections -> CollectionsScreen(
+            shouts = filteredShouts,
+            collectedWordKeys = collectedShoutWordKeys,
+            onBack = { screen = AppScreen.Home },
+            onOpenShouts = { screen = AppScreen.Shouts }
+        )
+
+        screen == AppScreen.Shouts -> ShoutTrackerScreen(
+            shouts = filteredShouts,
+            collectedWordKeys = collectedShoutWordKeys,
+            onBack = { screen = AppScreen.Collections },
+            onWordChanged = { wordKey, collected ->
+                val character = activeCharacter
+                if (character != null) {
+                    scope.launch {
+                        playerRepository.setCollectionItemCollected(
+                            characterId = character.id,
+                            collectionKey = SHOUT_COLLECTION_KEY,
+                            itemKey = wordKey,
+                            collected = collected
+                        )
+                        collectedShoutWordKeys = collectedShoutWordKeys.toMutableSet().apply {
+                            if (collected) add(wordKey) else remove(wordKey)
+                        }
+                    }
+                }
+            }
         )
 
         screen is AppScreen.Category -> {
@@ -219,18 +266,24 @@ fun DovahCheckApp() {
                     character = character,
                     quests = filteredQuests,
                     progress = progress,
+                    shouts = filteredShouts,
+                    collectedShoutWordKeys = collectedShoutWordKeys,
                     onCategorySelected = { categoryId ->
-                        val category = BrowseTaxonomy.category(categoryId)
-                        val onlyTarget = category?.targets?.singleOrNull()
-
-                        if (onlyTarget != null && category.releaseGroups.isEmpty()) {
-                            screen = AppScreen.Section(
-                                release = onlyTarget.release,
-                                section = onlyTarget.section,
-                                parentCategoryId = category.id
-                            )
+                        if (categoryId == "collections") {
+                            screen = AppScreen.Collections
                         } else {
-                            screen = AppScreen.Category(categoryId)
+                            val category = BrowseTaxonomy.category(categoryId)
+                            val onlyTarget = category?.targets?.singleOrNull()
+
+                            if (onlyTarget != null && category.releaseGroups.isEmpty()) {
+                                screen = AppScreen.Section(
+                                    release = onlyTarget.release,
+                                    section = onlyTarget.section,
+                                    parentCategoryId = category.id
+                                )
+                            } else {
+                                screen = AppScreen.Category(categoryId)
+                            }
                         }
                     },
                     onCharacters = { screen = AppScreen.Characters }
@@ -255,4 +308,15 @@ private fun List<QuestRecord>.filterForProfile(profileName: String?): List<Quest
         else -> null
     }
     return if (allowed == null) this else filter { (it.release ?: "Base Game") in allowed }
+}
+
+private fun List<ShoutRecord>.filterShoutsForProfile(profileName: String?): List<ShoutRecord> {
+    val allowed = when (profileName) {
+        "Original Skyrim (2011)" -> setOf("Base Game")
+        "Legendary Edition",
+        "Special Edition (current)",
+        "Anniversary Edition / Upgrade" -> setOf("Base Game", "Dawnguard", "Dragonborn")
+        else -> null
+    }
+    return if (allowed == null) this else filter { it.release in allowed }
 }

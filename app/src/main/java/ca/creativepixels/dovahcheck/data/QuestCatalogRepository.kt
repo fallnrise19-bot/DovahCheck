@@ -3,6 +3,7 @@ package ca.creativepixels.dovahcheck.data
 import android.content.Context
 import ca.creativepixels.dovahcheck.data.model.ContentProfileFile
 import ca.creativepixels.dovahcheck.data.model.QuestCatalogFile
+import ca.creativepixels.dovahcheck.data.model.ShoutCatalogFile
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
@@ -19,4 +20,9 @@ class QuestCatalogRepository(
         context.assets.open("data/content_profiles.v1.json")
             .bufferedReader()
             .use { json.decodeFromString<ContentProfileFile>(it.readText()) }
+
+    fun loadShoutCatalog(): ShoutCatalogFile =
+        context.assets.open("data/shouts.v1.json")
+            .bufferedReader()
+            .use { json.decodeFromString<ShoutCatalogFile>(it.readText()) }
 }
