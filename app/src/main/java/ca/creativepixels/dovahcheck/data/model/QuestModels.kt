@@ -56,7 +56,8 @@ data class ContentProfile(
 data class CharacterProfile(
     val id: String,
     val name: String,
-    val contentProfileName: String
+    val contentProfileName: String,
+    val portraitPath: String? = null
 )
 
 @Serializable
