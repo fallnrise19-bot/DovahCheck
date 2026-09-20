@@ -2,24 +2,16 @@
 
 package ca.creativepixels.dovahcheck.ui
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.ChevronRight
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -28,6 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ca.creativepixels.dovahcheck.data.model.QuestRecord
 import ca.creativepixels.dovahcheck.data.model.QuestState
+import ca.creativepixels.dovahcheck.ui.theme.themeForCategory
+import ca.creativepixels.dovahcheck.ui.theme.themeForRelease
+import ca.creativepixels.dovahcheck.ui.theme.themeForSection
 
 @Composable
 fun CategoryBrowseScreen(
@@ -38,6 +33,8 @@ fun CategoryBrowseScreen(
     onSectionSelected: (release: String, section: String) -> Unit,
     onReleaseSelected: (release: String) -> Unit
 ) {
+    val categoryTheme = themeForCategory(category.id)
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -54,30 +51,27 @@ fun CategoryBrowseScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+                .padding(horizontal = 16.dp)
         ) {
             item {
-                Text(
-                    category.subtitle,
-                    style = MaterialTheme.typography.bodyLarge
+                LedgerHero(
+                    title = category.title,
+                    subtitle = category.subtitle,
+                    theme = categoryTheme
                 )
-                Spacer(Modifier.height(6.dp))
+                Spacer(Modifier.height(14.dp))
             }
 
             if (category.collectionsPlaceholder) {
                 item {
-                    Card(modifier = Modifier.fillMaxWidth()) {
-                        Column(Modifier.padding(18.dp)) {
-                            Text(
-                                "Collection trackers are next",
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Text(
-                                "Shouts, Dragon Priest masks, Daedric artifacts, Stones of Barenziah and the rest will live here instead of being mixed into the quest ledger."
-                            )
-                        }
-                    }
+                    LedgerBrowseCard(
+                        title = "Collection trackers",
+                        subtitle = "Shouts, Dragon Priest masks, Daedric artifacts, Stones of Barenziah and more.",
+                        progress = "Next data module",
+                        theme = categoryTheme,
+                        onClick = {}
+                    )
+                    Spacer(Modifier.height(10.dp))
                 }
             }
 
@@ -91,12 +85,14 @@ fun CategoryBrowseScreen(
                     progress[it.internalKey] == QuestState.COMPLETED
                 }
 
-                BrowseCard(
+                LedgerBrowseCard(
                     title = target.title,
                     subtitle = target.subtitle ?: if (target.release == "Base Game") null else target.release,
                     progress = "$completed / ${targetQuests.size} completed",
+                    theme = themeForSection(target.release, target.section),
                     onClick = { onSectionSelected(target.release, target.section) }
                 )
+                Spacer(Modifier.height(10.dp))
             }
 
             items(category.releaseGroups) { release ->
@@ -107,12 +103,14 @@ fun CategoryBrowseScreen(
                     progress[it.internalKey] == QuestState.COMPLETED
                 }
 
-                BrowseCard(
+                LedgerBrowseCard(
                     title = release.displayReleaseName(),
                     subtitle = releaseSubtitle(release),
                     progress = "$completed / ${releaseQuests.size} completed",
+                    theme = themeForRelease(release),
                     onClick = { onReleaseSelected(release) }
                 )
+                Spacer(Modifier.height(10.dp))
             }
 
             item { Spacer(Modifier.height(18.dp)) }
@@ -134,6 +132,14 @@ fun ReleaseBrowseScreen(
         .toList()
         .sortedBy { it.first }
 
+    val releaseTheme = themeForRelease(release)
+    val eligibleRelease = quests.filter {
+        (it.release ?: "Base Game") == release && !it.isExcludedFromCompletion()
+    }
+    val completedRelease = eligibleRelease.count {
+        progress[it.internalKey] == QuestState.COMPLETED
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -150,61 +156,34 @@ fun ReleaseBrowseScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+                .padding(horizontal = 16.dp)
         ) {
+            item {
+                LedgerHero(
+                    title = release.displayReleaseName(),
+                    subtitle = releaseSubtitle(release),
+                    theme = releaseTheme,
+                    progress = "$completedRelease / ${eligibleRelease.size} completed"
+                )
+                Spacer(Modifier.height(14.dp))
+            }
+
             items(sections) { (section, sectionQuests) ->
                 val eligible = sectionQuests.filterNot { it.isExcludedFromCompletion() }
                 val completed = eligible.count {
                     progress[it.internalKey] == QuestState.COMPLETED
                 }
-                BrowseCard(
+                LedgerBrowseCard(
                     title = section,
                     subtitle = null,
                     progress = "$completed / ${eligible.size} completed",
+                    theme = themeForSection(release, section),
                     onClick = { onSectionSelected(release, section) }
                 )
+                Spacer(Modifier.height(10.dp))
             }
 
             item { Spacer(Modifier.height(18.dp)) }
-        }
-    }
-}
-
-@Composable
-private fun BrowseCard(
-    title: String,
-    subtitle: String?,
-    progress: String,
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Column(Modifier.weight(1f)) {
-                Text(title, style = MaterialTheme.typography.titleMedium)
-                subtitle?.takeIf { it.isNotBlank() }?.let {
-                    Text(
-                        it,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                Text(
-                    progress,
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-            Icon(Icons.Outlined.ChevronRight, contentDescription = null)
         }
     }
 }
