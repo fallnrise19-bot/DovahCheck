@@ -12,7 +12,7 @@ object CharacterPortraitStore {
     ): String? {
         return runCatching {
             val directory = File(context.filesDir, "character_portraits").apply { mkdirs() }
-            val destination = File(directory, "$characterId.jpg")
+            val destination = File(directory, "$characterId.img")
 
             context.contentResolver.openInputStream(sourceUri)?.use { input ->
                 destination.outputStream().use { output ->
