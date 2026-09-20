@@ -1,0 +1,656 @@
+{
+  "schemaVersion": 1,
+  "source": "Dragon Shout List.xlsx via Skyrim Completionist App - Master Inventory",
+  "shoutCount": 27,
+  "wordCount": 81,
+  "shouts": [
+    {
+      "key": "shout:animal-allegiance",
+      "release": "Base Game",
+      "name": "Animal Allegiance",
+      "acquisitionSummary": "Ancient's Ascent Angarvunde Ysgramor's Tomb",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:animal-allegiance:raan",
+          "word": "Raan",
+          "translation": "Animal"
+        },
+        {
+          "key": "shout:animal-allegiance:mir",
+          "word": "Mir",
+          "translation": "Allegiance"
+        },
+        {
+          "key": "shout:animal-allegiance:tah",
+          "word": "Tah",
+          "translation": "Pack"
+        }
+      ]
+    },
+    {
+      "key": "shout:aura-whisper",
+      "release": "Base Game",
+      "name": "Aura Whisper",
+      "acquisitionSummary": "Northwind Summit Valthume Volunruud",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:aura-whisper:laas",
+          "word": "Laas",
+          "translation": "Life"
+        },
+        {
+          "key": "shout:aura-whisper:yah",
+          "word": "Yah",
+          "translation": "Seek"
+        },
+        {
+          "key": "shout:aura-whisper:nir",
+          "word": "Nir",
+          "translation": "Hunt"
+        }
+      ]
+    },
+    {
+      "key": "shout:become-ethereal",
+      "release": "Base Game",
+      "name": "Become Ethereal",
+      "acquisitionSummary": "Ironbind Barrow Lost Valley Redoubt Ustengrav (quest locked)",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:become-ethereal:feim",
+          "word": "Feim",
+          "translation": "Fade"
+        },
+        {
+          "key": "shout:become-ethereal:zii",
+          "word": "Zii",
+          "translation": "Spirit"
+        },
+        {
+          "key": "shout:become-ethereal:gron",
+          "word": "Gron",
+          "translation": "Bind"
+        }
+      ]
+    },
+    {
+      "key": "shout:call-dragon",
+      "release": "Base Game",
+      "name": "Call Dragon",
+      "acquisitionSummary": "High Hrothgar - During The Fallen",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:call-dragon:od",
+          "word": "Od",
+          "translation": "Snow"
+        },
+        {
+          "key": "shout:call-dragon:ah",
+          "word": "Ah",
+          "translation": "Hunter"
+        },
+        {
+          "key": "shout:call-dragon:viing",
+          "word": "Viing",
+          "translation": "Wing"
+        }
+      ]
+    },
+    {
+      "key": "shout:call-of-valor",
+      "release": "Base Game",
+      "name": "Call of Valor",
+      "acquisitionSummary": "Sovngarde - During Dragonslayer",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:call-of-valor:hun",
+          "word": "Hun",
+          "translation": "Hero"
+        },
+        {
+          "key": "shout:call-of-valor:kaal",
+          "word": "Kaal",
+          "translation": "Champion"
+        },
+        {
+          "key": "shout:call-of-valor:zoor",
+          "word": "Zoor",
+          "translation": "Legend"
+        }
+      ]
+    },
+    {
+      "key": "shout:clear-skies",
+      "release": "Base Game",
+      "name": "Clear Skies",
+      "acquisitionSummary": "High Hrothgar - During The Throat of the World",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:clear-skies:lok",
+          "word": "Lok",
+          "translation": "Sky"
+        },
+        {
+          "key": "shout:clear-skies:vah",
+          "word": "Vah",
+          "translation": "Spring"
+        },
+        {
+          "key": "shout:clear-skies:koor",
+          "word": "Koor",
+          "translation": "Summer"
+        }
+      ]
+    },
+    {
+      "key": "shout:disarm",
+      "release": "Base Game",
+      "name": "Disarm",
+      "acquisitionSummary": "Eldersblood Peak Silverdrift Lair Snow Veil Sanctum (quest locked)",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:disarm:zun",
+          "word": "Zun",
+          "translation": "Weapon"
+        },
+        {
+          "key": "shout:disarm:haal",
+          "word": "Haal",
+          "translation": "Hand"
+        },
+        {
+          "key": "shout:disarm:viik",
+          "word": "Viik",
+          "translation": "Defeat"
+        }
+      ]
+    },
+    {
+      "key": "shout:dismay",
+      "release": "Base Game",
+      "name": "Dismay",
+      "acquisitionSummary": "Dead Crone Rock Lost Tongue Overlook Shalidor's Maze",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:dismay:faas",
+          "word": "Faas",
+          "translation": "Fear"
+        },
+        {
+          "key": "shout:dismay:ru",
+          "word": "Ru",
+          "translation": "Run"
+        },
+        {
+          "key": "shout:dismay:maar",
+          "word": "Maar",
+          "translation": "Terror"
+        }
+      ]
+    },
+    {
+      "key": "shout:dragonrend",
+      "release": "Base Game",
+      "name": "Dragonrend",
+      "acquisitionSummary": "Throat of the World - During Alduin's Bane",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:dragonrend:joor",
+          "word": "Joor",
+          "translation": "Mortal"
+        },
+        {
+          "key": "shout:dragonrend:zah",
+          "word": "Zah",
+          "translation": "Finite"
+        },
+        {
+          "key": "shout:dragonrend:frul",
+          "word": "Frul",
+          "translation": "Temporary"
+        }
+      ]
+    },
+    {
+      "key": "shout:elemental-fury",
+      "release": "Base Game",
+      "name": "Elemental Fury",
+      "acquisitionSummary": "Dragontooth Crater Shriekwind Bastion Statue to Meridia",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:elemental-fury:su",
+          "word": "Su",
+          "translation": "Air"
+        },
+        {
+          "key": "shout:elemental-fury:grah",
+          "word": "Grah",
+          "translation": "Battle"
+        },
+        {
+          "key": "shout:elemental-fury:dun",
+          "word": "Dun",
+          "translation": "Grace"
+        }
+      ]
+    },
+    {
+      "key": "shout:fire-breath",
+      "release": "Base Game",
+      "name": "Fire Breath",
+      "acquisitionSummary": "Dustman's Cairn (quest locked) Sunderstone Gorge Throat of the World - During Throat of the World)",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:fire-breath:yol",
+          "word": "Yol",
+          "translation": "Fire"
+        },
+        {
+          "key": "shout:fire-breath:toor",
+          "word": "Toor",
+          "translation": "Inferno"
+        },
+        {
+          "key": "shout:fire-breath:shul",
+          "word": "Shul",
+          "translation": "Sun"
+        }
+      ]
+    },
+    {
+      "key": "shout:frost-breath",
+      "release": "Base Game",
+      "name": "Frost Breath",
+      "acquisitionSummary": "Bonestrewn Crest Folgunthur Skyborn Altar",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:frost-breath:fo",
+          "word": "Fo",
+          "translation": "Frost"
+        },
+        {
+          "key": "shout:frost-breath:krah",
+          "word": "Krah",
+          "translation": "Cold"
+        },
+        {
+          "key": "shout:frost-breath:diin",
+          "word": "Diin",
+          "translation": "Freeze"
+        }
+      ]
+    },
+    {
+      "key": "shout:ice-form",
+      "release": "Base Game",
+      "name": "Ice Form",
+      "acquisitionSummary": "Frostmere Crypt Mount Anthor Saarthal (quest locked)",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:ice-form:iiz",
+          "word": "Iiz",
+          "translation": "Ice"
+        },
+        {
+          "key": "shout:ice-form:slen",
+          "word": "Slen",
+          "translation": "Flesh"
+        },
+        {
+          "key": "shout:ice-form:nus",
+          "word": "Nus",
+          "translation": "Statue"
+        }
+      ]
+    },
+    {
+      "key": "shout:kyne-s-peace",
+      "release": "Base Game",
+      "name": "Kyne's Peace",
+      "acquisitionSummary": "Ragnvald Rannveig's Fast Shroud Hearth Barrow",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:kyne-s-peace:kaan",
+          "word": "Kaan",
+          "translation": "Kyne"
+        },
+        {
+          "key": "shout:kyne-s-peace:drem",
+          "word": "Drem",
+          "translation": "Peace"
+        },
+        {
+          "key": "shout:kyne-s-peace:ov",
+          "word": "Ov",
+          "translation": "Trust"
+        }
+      ]
+    },
+    {
+      "key": "shout:marked-for-death",
+      "release": "Base Game",
+      "name": "Marked for Death",
+      "acquisitionSummary": "Autumnwatch Tower Dark Brotherhood Sanctuary (quest locked) Forsaken Cave",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:marked-for-death:krii",
+          "word": "Krii",
+          "translation": "Kill"
+        },
+        {
+          "key": "shout:marked-for-death:lun",
+          "word": "Lun",
+          "translation": "Leech"
+        },
+        {
+          "key": "shout:marked-for-death:aus",
+          "word": "Aus",
+          "translation": "Suffer"
+        }
+      ]
+    },
+    {
+      "key": "shout:slow-time",
+      "release": "Base Game",
+      "name": "Slow Time",
+      "acquisitionSummary": "Hag's End Korvanjund (quest locked) Labyrinthian (quest locked)",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:slow-time:tiid",
+          "word": "Tiid",
+          "translation": "Time"
+        },
+        {
+          "key": "shout:slow-time:klo",
+          "word": "Klo",
+          "translation": "Sand"
+        },
+        {
+          "key": "shout:slow-time:ul",
+          "word": "Ul",
+          "translation": "Eternity"
+        }
+      ]
+    },
+    {
+      "key": "shout:storm-call",
+      "release": "Base Game",
+      "name": "Storm Call",
+      "acquisitionSummary": "Forelhost High Gate Ruins Skuldafn Temple (quest locked)",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:storm-call:strun",
+          "word": "Strun",
+          "translation": "Storm"
+        },
+        {
+          "key": "shout:storm-call:bah",
+          "word": "Bah",
+          "translation": "Wrath"
+        },
+        {
+          "key": "shout:storm-call:qo",
+          "word": "Qo",
+          "translation": "Lightning"
+        }
+      ]
+    },
+    {
+      "key": "shout:throw-voice",
+      "release": "Base Game",
+      "name": "Throw Voice",
+      "acquisitionSummary": "Shearpoint",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:throw-voice:zul",
+          "word": "Zul",
+          "translation": "Voice"
+        },
+        {
+          "key": "shout:throw-voice:mey",
+          "word": "Mey",
+          "translation": "Fool"
+        },
+        {
+          "key": "shout:throw-voice:gut",
+          "word": "Gut",
+          "translation": "Far"
+        }
+      ]
+    },
+    {
+      "key": "shout:unrelenting-force",
+      "release": "Base Game",
+      "name": "Unrelenting Force",
+      "acquisitionSummary": "Bleak Falls Barrow High Hrothgar - During The Way of the Voice High Hrothgar - During The Horn of Jurgen Windcaller",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:unrelenting-force:fus",
+          "word": "Fus",
+          "translation": "Force"
+        },
+        {
+          "key": "shout:unrelenting-force:ro",
+          "word": "Ro",
+          "translation": "Balance"
+        },
+        {
+          "key": "shout:unrelenting-force:dah",
+          "word": "Dah",
+          "translation": "Push"
+        }
+      ]
+    },
+    {
+      "key": "shout:whirlwind-sprint",
+      "release": "Base Game",
+      "name": "Whirlwind Sprint",
+      "acquisitionSummary": "Dead Men's Respite High Hrothgar - During The Way of the Voice Volskygge",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:whirlwind-sprint:wuld",
+          "word": "Wuld",
+          "translation": "Whirlwind"
+        },
+        {
+          "key": "shout:whirlwind-sprint:nah",
+          "word": "Nah",
+          "translation": "Fury"
+        },
+        {
+          "key": "shout:whirlwind-sprint:kest",
+          "word": "Kest",
+          "translation": "Tempest"
+        }
+      ]
+    },
+    {
+      "key": "shout:drain-vitality",
+      "release": "Dawnguard",
+      "name": "Drain Vitality",
+      "acquisitionSummary": "Dimhollow Crypt Forgotten Vale Arcwind Point",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:drain-vitality:gaan",
+          "word": "Gaan",
+          "translation": "Stamina"
+        },
+        {
+          "key": "shout:drain-vitality:lah",
+          "word": "Lah",
+          "translation": "Magicka"
+        },
+        {
+          "key": "shout:drain-vitality:haas",
+          "word": "Haas",
+          "translation": "Health"
+        }
+      ]
+    },
+    {
+      "key": "shout:soul-tear",
+      "release": "Dawnguard",
+      "name": "Soul Tear",
+      "acquisitionSummary": "Durnehviir teaches you a word each time you summon him from the Soul Cairn.",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:soul-tear:rii",
+          "word": "Rii",
+          "translation": "Essence"
+        },
+        {
+          "key": "shout:soul-tear:vaaz",
+          "word": "Vaaz",
+          "translation": "Tear"
+        },
+        {
+          "key": "shout:soul-tear:zol",
+          "word": "Zol",
+          "translation": "Zombie"
+        }
+      ]
+    },
+    {
+      "key": "shout:summon-durnehviir",
+      "release": "Dawnguard",
+      "name": "Summon Durnehviir",
+      "acquisitionSummary": "Soul Cairn - During Beyond Death",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:summon-durnehviir:dur",
+          "word": "Dur",
+          "translation": "Curse"
+        },
+        {
+          "key": "shout:summon-durnehviir:neh",
+          "word": "Neh",
+          "translation": "Never"
+        },
+        {
+          "key": "shout:summon-durnehviir:viir",
+          "word": "Viir",
+          "translation": "Dying"
+        }
+      ]
+    },
+    {
+      "key": "shout:battle-fury",
+      "release": "Dragonborn",
+      "name": "Battle Fury",
+      "acquisitionSummary": "Vahlok's Tomb",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:battle-fury:mid",
+          "word": "Mid",
+          "translation": "Loyal"
+        },
+        {
+          "key": "shout:battle-fury:vur",
+          "word": "Vur",
+          "translation": "Valor"
+        },
+        {
+          "key": "shout:battle-fury:shaan",
+          "word": "Shaan",
+          "translation": "Inspire"
+        }
+      ]
+    },
+    {
+      "key": "shout:bend-will",
+      "release": "Dragonborn",
+      "name": "Bend Will",
+      "acquisitionSummary": "Saering's Watch Taught to you by Hermaeus Mora Taught to you by Hermaeus Mora",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:bend-will:gol",
+          "word": "Gol",
+          "translation": "Earth"
+        },
+        {
+          "key": "shout:bend-will:hah",
+          "word": "Hah",
+          "translation": "Mind"
+        },
+        {
+          "key": "shout:bend-will:dov",
+          "word": "Dov",
+          "translation": "Dragon"
+        }
+      ]
+    },
+    {
+      "key": "shout:cyclone",
+      "release": "Dragonborn",
+      "name": "Cyclone",
+      "acquisitionSummary": "White Ridge Sanctum Benkongerike Kolbjorn Barrow",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:cyclone:ven",
+          "word": "Ven",
+          "translation": "Wind"
+        },
+        {
+          "key": "shout:cyclone:gaar",
+          "word": "Gaar",
+          "translation": "Unleash"
+        },
+        {
+          "key": "shout:cyclone:nos",
+          "word": "Nos",
+          "translation": "Strike"
+        }
+      ]
+    },
+    {
+      "key": "shout:dragon-aspect",
+      "release": "Dragonborn",
+      "name": "Dragon Aspect",
+      "acquisitionSummary": "Raven Rock Mine Temple of Miraak Apocrypha - During Waking Dreams",
+      "source": "Dragon Shout List.xlsx",
+      "words": [
+        {
+          "key": "shout:dragon-aspect:mul",
+          "word": "Mul",
+          "translation": "Strength"
+        },
+        {
+          "key": "shout:dragon-aspect:qah",
+          "word": "Qah",
+          "translation": "Armor"
+        },
+        {
+          "key": "shout:dragon-aspect:diiv",
+          "word": "Diiv",
+          "translation": "Wyrm"
+        }
+      ]
+    }
+  ]
+}
