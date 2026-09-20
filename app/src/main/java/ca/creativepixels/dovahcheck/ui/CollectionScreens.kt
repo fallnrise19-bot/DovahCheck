@@ -28,6 +28,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ca.creativepixels.dovahcheck.data.model.ShoutRecord
@@ -201,6 +205,7 @@ private fun ShoutCard(
 ) {
     val learned = shout.words.count { it.key in collectedWordKeys }
     val complete = shout.words.isNotEmpty() && learned == shout.words.size
+    var locationRevealed by rememberSaveable(shout.key) { mutableStateOf(false) }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -250,12 +255,30 @@ private fun ShoutCard(
 
             shout.acquisitionSummary
                 .takeIf { it.isNotBlank() }
-                ?.let {
-                    Text(
-                        "Where: $it",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = theme.bodyColor
-                    )
+                ?.let { location ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                "Location",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = theme.accent
+                            )
+                            Text(
+                                if (locationRevealed) location else "Hidden to avoid spoilers",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = theme.bodyColor
+                            )
+                        }
+                        TextButton(onClick = { locationRevealed = !locationRevealed }) {
+                            Text(
+                                if (locationRevealed) "Hide" else "Reveal",
+                                color = theme.accent
+                            )
+                        }
+                    }
                 }
 
             TextButton(
