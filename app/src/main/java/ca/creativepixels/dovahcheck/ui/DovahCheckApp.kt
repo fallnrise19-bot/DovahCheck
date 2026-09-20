@@ -122,12 +122,14 @@ fun DovahCheckApp() {
                 progress = progress,
                 onBack = { screen = AppScreen.Home },
                 onStateChange = { quest, state ->
-                    val character = activeCharacter ?: return@QuestSectionScreen
-                    scope.launch {
-                        playerRepository.setQuestState(character.id, quest.internalKey, state)
-                        progress = progress.toMutableMap().apply {
-                            if (state == QuestState.NOT_FOUND) remove(quest.internalKey)
-                            else put(quest.internalKey, state)
+                    val character = activeCharacter
+                    if (character != null) {
+                        scope.launch {
+                            playerRepository.setQuestState(character.id, quest.internalKey, state)
+                            progress = progress.toMutableMap().apply {
+                                if (state == QuestState.NOT_FOUND) remove(quest.internalKey)
+                                else put(quest.internalKey, state)
+                            }
                         }
                     }
                 }
