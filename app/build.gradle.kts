@@ -5,6 +5,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
 }
 
+val ciRunNumber = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 0
+
 android {
     namespace = "ca.creativepixels.dovahcheck"
     compileSdk = 35
@@ -13,11 +15,23 @@ android {
         applicationId = "ca.creativepixels.dovahcheck"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 100000 + ciRunNumber
+        versionName = "0.1.1-debug.${ciRunNumber}"
+    }
+
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
     }
 
     buildTypes {
+        debug {
+            signingConfig = signingConfigs.getByName("debug")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
