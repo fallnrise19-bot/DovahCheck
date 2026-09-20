@@ -93,5 +93,6 @@ enum class QuestState {
 data class PlayerStateStore(
     val activeCharacterId: String? = null,
     val characters: List<CharacterProfile> = emptyList(),
-    val progress: List<QuestProgress> = emptyList()
+    val progress: List<QuestProgress> = emptyList(),
+    val collectionProgress: List<CollectionProgress> = emptyList()
 )
