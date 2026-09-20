@@ -31,7 +31,13 @@ fun CategoryBrowseScreen(
     progress: Map<String, QuestState>,
     onBack: () -> Unit,
     onSectionSelected: (release: String, section: String) -> Unit,
-    onReleaseSelected: (release: String) -> Unit
+    onReleaseSelected: (release: String) -> Unit,
+    bottomNavItem: LedgerNavItem? = null,
+    onHome: () -> Unit = {},
+    onQuests: () -> Unit = {},
+    onHolds: () -> Unit = {},
+    onCollections: () -> Unit = {},
+    onMore: () -> Unit = {}
 ) {
     val categoryTheme = themeForCategory(category.id)
 
@@ -45,6 +51,18 @@ fun CategoryBrowseScreen(
                     }
                 }
             )
+        },
+        bottomBar = {
+            bottomNavItem?.let { selected ->
+                LedgerBottomNav(
+                    selected = selected,
+                    onHome = onHome,
+                    onQuests = onQuests,
+                    onHolds = onHolds,
+                    onCollections = onCollections,
+                    onMore = onMore
+                )
+            }
         }
     ) { padding ->
         LazyColumn(
