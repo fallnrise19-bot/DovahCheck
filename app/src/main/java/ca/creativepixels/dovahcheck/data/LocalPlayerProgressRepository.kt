@@ -2,6 +2,7 @@ package ca.creativepixels.dovahcheck.data
 
 import android.content.Context
 import ca.creativepixels.dovahcheck.data.model.CharacterProfile
+import ca.creativepixels.dovahcheck.data.model.CollectionProgress
 import ca.creativepixels.dovahcheck.data.model.PlayerStateStore
 import ca.creativepixels.dovahcheck.data.model.QuestProgress
 import ca.creativepixels.dovahcheck.data.model.QuestState
@@ -86,6 +87,38 @@ class LocalPlayerProgressRepository(
             )
         }
         save(current.copy(progress = updated))
+    }
+
+    override suspend fun collectionProgress(
+        characterId: String,
+        collectionKey: String
+    ): List<CollectionProgress> =
+        load().collectionProgress.filter {
+            it.characterId == characterId && it.collectionKey == collectionKey
+        }
+
+    override suspend fun setCollectionItemCollected(
+        characterId: String,
+        collectionKey: String,
+        itemKey: String,
+        collected: Boolean
+    ) {
+        val current = load()
+        val remaining = current.collectionProgress.filterNot {
+            it.characterId == characterId &&
+                it.collectionKey == collectionKey &&
+                it.itemKey == itemKey
+        }
+        val updated = if (collected) {
+            remaining + CollectionProgress(
+                characterId = characterId,
+                collectionKey = collectionKey,
+                itemKey = itemKey
+            )
+        } else {
+            remaining
+        }
+        save(current.copy(collectionProgress = updated))
     }
 
     private companion object {
