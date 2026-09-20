@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import ca.creativepixels.dovahcheck.data.model.CharacterProfile
 import ca.creativepixels.dovahcheck.data.model.QuestRecord
 import ca.creativepixels.dovahcheck.data.model.QuestState
+import ca.creativepixels.dovahcheck.data.model.ShoutRecord
 import ca.creativepixels.dovahcheck.ui.theme.themeForCategory
 import ca.creativepixels.dovahcheck.ui.theme.themeForSection
 
@@ -33,6 +34,8 @@ fun HomeScreen(
     character: CharacterProfile,
     quests: List<QuestRecord>,
     progress: Map<String, QuestState>,
+    shouts: List<ShoutRecord>,
+    collectedShoutWordKeys: Set<String>,
     onCategorySelected: (String) -> Unit,
     onCharacters: () -> Unit
 ) {
@@ -92,14 +95,20 @@ fun HomeScreen(
                     progress[it.internalKey] == QuestState.COMPLETED
                 }
 
+                val progressText = if (category.id == "collections") {
+                    val wordCount = shouts.sumOf { it.words.size }
+                    val learned = shouts.sumOf { shout ->
+                        shout.words.count { it.key in collectedShoutWordKeys }
+                    }
+                    "$learned / $wordCount shout words learned"
+                } else {
+                    "$categoryCompleted / ${categoryQuests.size} completed"
+                }
+
                 LedgerBrowseCard(
                     title = category.title,
                     subtitle = category.subtitle,
-                    progress = if (category.collectionsPlaceholder) {
-                        "Tracker coming next"
-                    } else {
-                        "$categoryCompleted / ${categoryQuests.size} completed"
-                    },
+                    progress = progressText,
                     theme = themeForCategory(category.id),
                     onClick = { onCategorySelected(category.id) }
                 )
