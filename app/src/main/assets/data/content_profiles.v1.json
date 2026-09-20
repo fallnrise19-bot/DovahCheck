@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "profiles": [
+    {
+      "name": "Original Skyrim (2011)",
+      "baseGame": "ON",
+      "dawnguard": "OFF",
+      "hearthfire": "OFF",
+      "dragonborn": "OFF",
+      "freeCreationsSE": "OFF",
+      "anniversaryCreations": "OFF",
+      "recommendedUse": "Original release completion"
+    },
+    {
+      "name": "Legendary Edition",
+      "baseGame": "ON",
+      "dawnguard": "ON",
+      "hearthfire": "ON",
+      "dragonborn": "ON",
+      "freeCreationsSE": "OFF",
+      "anniversaryCreations": "OFF",
+      "recommendedUse": "2013 Legendary Edition / classic DLC completion"
+    },
+    {
+      "name": "Special Edition (current)",
+      "baseGame": "ON",
+      "dawnguard": "ON",
+      "hearthfire": "ON",
+      "dragonborn": "ON",
+      "freeCreationsSE": "ON",
+      "anniversaryCreations": "OFF",
+      "recommendedUse": "Includes Fishing, Survival Mode, Saints & Seducers and Rare Curios as free Creations"
+    },
+    {
+      "name": "Anniversary Edition / Upgrade",
+      "baseGame": "ON",
+      "dawnguard": "ON",
+      "hearthfire": "ON",
+      "dragonborn": "ON",
+      "freeCreationsSE": "ON",
+      "anniversaryCreations": "ON",
+      "recommendedUse": "Special Edition plus bundled Anniversary Creation Club content"
+    },
+    {
+      "name": "Custom",
+      "baseGame": "User",
+      "dawnguard": "User",
+      "hearthfire": "User",
+      "dragonborn": "User",
+      "freeCreationsSE": "User",
+      "anniversaryCreations": "User",
+      "recommendedUse": "Let player match installed/enabled content"
+    }
+  ]
+}
