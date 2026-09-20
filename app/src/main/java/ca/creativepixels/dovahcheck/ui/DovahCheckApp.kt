@@ -47,13 +47,14 @@ fun DovahCheckApp() {
     var screen by remember { mutableStateOf<AppScreen?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
 
-    suspend fun refreshPlayerState(character: CharacterProfile? = playerRepository.activeCharacter()) {
+    suspend fun refreshPlayerState(character: CharacterProfile? = null) {
+        val resolvedCharacter = character ?: playerRepository.activeCharacter()
         characters = playerRepository.characters()
-        activeCharacter = character
-        progress = if (character == null) {
+        activeCharacter = resolvedCharacter
+        progress = if (resolvedCharacter == null) {
             emptyMap()
         } else {
-            playerRepository.questProgress(character.id).associate { it.questKey to it.state }
+            playerRepository.questProgress(resolvedCharacter.id).associate { it.questKey to it.state }
         }
     }
 
@@ -113,7 +114,10 @@ fun DovahCheckApp() {
             val section = screen as AppScreen.Section
             val visibleQuests = quests.orEmpty()
                 .filterForProfile(activeCharacter?.contentProfileName)
-                .filter { (it.release ?: "Base Game") == section.release && (it.section ?: "Other") == section.section }
+                .filter {
+                    (it.release ?: "Base Game") == section.release &&
+                        (it.section ?: "Other") == section.section
+                }
 
             QuestSectionScreen(
                 release = section.release,
