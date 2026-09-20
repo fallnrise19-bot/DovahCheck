@@ -180,7 +180,16 @@ fun DovahCheckApp() {
             shouts = filteredShouts,
             collectedWordKeys = collectedShoutWordKeys,
             onBack = { screen = AppScreen.Home },
-            onOpenShouts = { screen = AppScreen.Shouts }
+            onOpenShouts = { screen = AppScreen.Shouts },
+            onHome = { screen = AppScreen.Home },
+            onQuests = { screen = AppScreen.QuestHub },
+            onHolds = {
+                screen = AppScreen.Category(
+                    id = "holds",
+                    parentHub = LedgerNavItem.HOLDS
+                )
+            },
+            onMore = { screen = AppScreen.Characters }
         )
 
         screen == AppScreen.Shouts -> ShoutTrackerScreen(
@@ -235,7 +244,13 @@ fun DovahCheckApp() {
                             release = release,
                             parentHub = categoryScreen.parentHub
                         )
-                    }
+                    },
+                    bottomNavItem = if (category.id == "holds") LedgerNavItem.HOLDS else null,
+                    onHome = { screen = AppScreen.Home },
+                    onQuests = { screen = AppScreen.QuestHub },
+                    onHolds = {},
+                    onCollections = { screen = AppScreen.Collections },
+                    onMore = { screen = AppScreen.Characters }
                 )
             }
         }
