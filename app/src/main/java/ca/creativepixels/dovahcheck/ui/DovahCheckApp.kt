@@ -30,17 +30,25 @@ private const val SHOUT_COLLECTION_KEY = "shout_words"
 
 private sealed interface AppScreen {
     data object Home : AppScreen
+    data object QuestHub : AppScreen
     data object Characters : AppScreen
     data object CreateCharacter : AppScreen
     data object Collections : AppScreen
     data object Shouts : AppScreen
-    data class Category(val id: String) : AppScreen
-    data class Release(val release: String) : AppScreen
+    data class Category(
+        val id: String,
+        val parentHub: LedgerNavItem? = null
+    ) : AppScreen
+    data class Release(
+        val release: String,
+        val parentHub: LedgerNavItem? = null
+    ) : AppScreen
     data class Section(
         val release: String,
         val section: String,
         val parentCategoryId: String? = null,
-        val parentRelease: String? = null
+        val parentRelease: String? = null,
+        val parentHub: LedgerNavItem? = null
     ) : AppScreen
 }
 
@@ -137,11 +145,51 @@ fun DovahCheckApp() {
             onBack = { screen = AppScreen.Home }
         )
 
+        screen == AppScreen.QuestHub -> QuestHubScreen(
+            quests = filteredQuests,
+            progress = progress,
+            onCategorySelected = { categoryId ->
+                val category = BrowseTaxonomy.category(categoryId)
+                val onlyTarget = category?.targets?.singleOrNull()
+
+                if (onlyTarget != null && category.releaseGroups.isEmpty()) {
+                    screen = AppScreen.Section(
+                        release = onlyTarget.release,
+                        section = onlyTarget.section,
+                        parentHub = LedgerNavItem.QUESTS
+                    )
+                } else {
+                    screen = AppScreen.Category(
+                        id = categoryId,
+                        parentHub = LedgerNavItem.QUESTS
+                    )
+                }
+            },
+            onHome = { screen = AppScreen.Home },
+            onHolds = {
+                screen = AppScreen.Category(
+                    id = "holds",
+                    parentHub = LedgerNavItem.HOLDS
+                )
+            },
+            onCollections = { screen = AppScreen.Collections },
+            onMore = { screen = AppScreen.Characters }
+        )
+
         screen == AppScreen.Collections -> CollectionsScreen(
             shouts = filteredShouts,
             collectedWordKeys = collectedShoutWordKeys,
             onBack = { screen = AppScreen.Home },
-            onOpenShouts = { screen = AppScreen.Shouts }
+            onOpenShouts = { screen = AppScreen.Shouts },
+            onHome = { screen = AppScreen.Home },
+            onQuests = { screen = AppScreen.QuestHub },
+            onHolds = {
+                screen = AppScreen.Category(
+                    id = "holds",
+                    parentHub = LedgerNavItem.HOLDS
+                )
+            },
+            onMore = { screen = AppScreen.Characters }
         )
 
         screen == AppScreen.Shouts -> ShoutTrackerScreen(
@@ -177,17 +225,32 @@ fun DovahCheckApp() {
                     category = category,
                     quests = filteredQuests,
                     progress = progress,
-                    onBack = { screen = AppScreen.Home },
+                    onBack = {
+                        screen = when (categoryScreen.parentHub) {
+                            LedgerNavItem.QUESTS -> AppScreen.QuestHub
+                            else -> AppScreen.Home
+                        }
+                    },
                     onSectionSelected = { release, section ->
                         screen = AppScreen.Section(
                             release = release,
                             section = section,
-                            parentCategoryId = category.id
+                            parentCategoryId = category.id,
+                            parentHub = categoryScreen.parentHub
                         )
                     },
                     onReleaseSelected = { release ->
-                        screen = AppScreen.Release(release)
-                    }
+                        screen = AppScreen.Release(
+                            release = release,
+                            parentHub = categoryScreen.parentHub
+                        )
+                    },
+                    bottomNavItem = if (category.id == "holds") LedgerNavItem.HOLDS else null,
+                    onHome = { screen = AppScreen.Home },
+                    onQuests = { screen = AppScreen.QuestHub },
+                    onHolds = {},
+                    onCollections = { screen = AppScreen.Collections },
+                    onMore = { screen = AppScreen.Characters }
                 )
             }
         }
@@ -198,13 +261,19 @@ fun DovahCheckApp() {
                 release = releaseScreen.release,
                 quests = filteredQuests,
                 progress = progress,
-                onBack = { screen = AppScreen.Category("dlc") },
+                onBack = {
+                    screen = AppScreen.Category(
+                        id = "dlc",
+                        parentHub = releaseScreen.parentHub
+                    )
+                },
                 onSectionSelected = { release, section ->
                     screen = AppScreen.Section(
                         release = release,
                         section = section,
                         parentCategoryId = "dlc",
-                        parentRelease = release
+                        parentRelease = release,
+                        parentHub = releaseScreen.parentHub
                     )
                 }
             )
@@ -227,9 +296,17 @@ fun DovahCheckApp() {
                 onBack = {
                     screen = when {
                         sectionScreen.parentRelease != null ->
-                            AppScreen.Release(sectionScreen.parentRelease)
+                            AppScreen.Release(
+                                release = sectionScreen.parentRelease,
+                                parentHub = sectionScreen.parentHub
+                            )
                         sectionScreen.parentCategoryId != null ->
-                            AppScreen.Category(sectionScreen.parentCategoryId)
+                            AppScreen.Category(
+                                id = sectionScreen.parentCategoryId,
+                                parentHub = sectionScreen.parentHub
+                            )
+                        sectionScreen.parentHub == LedgerNavItem.QUESTS ->
+                            AppScreen.QuestHub
                         else -> AppScreen.Home
                     }
                 },
@@ -278,14 +355,27 @@ fun DovahCheckApp() {
                             if (onlyTarget != null && category.releaseGroups.isEmpty()) {
                                 screen = AppScreen.Section(
                                     release = onlyTarget.release,
-                                    section = onlyTarget.section,
-                                    parentCategoryId = category.id
+                                    section = onlyTarget.section
                                 )
                             } else {
                                 screen = AppScreen.Category(categoryId)
                             }
                         }
                     },
+                    onOpenQuest = { release, section ->
+                        screen = AppScreen.Section(
+                            release = release,
+                            section = section
+                        )
+                    },
+                    onQuests = { screen = AppScreen.QuestHub },
+                    onHolds = {
+                        screen = AppScreen.Category(
+                            id = "holds",
+                            parentHub = LedgerNavItem.HOLDS
+                        )
+                    },
+                    onCollections = { screen = AppScreen.Collections },
                     onCharacters = { screen = AppScreen.Characters }
                 )
             }
