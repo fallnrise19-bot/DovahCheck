@@ -296,99 +296,126 @@ private fun CharacterDashboardCard(
         colors = CardDefaults.cardColors(containerColor = theme.surface),
         border = BorderStroke(1.dp, theme.accentSoft)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(14.dp)
+        Column(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .size(88.dp)
-                    .clip(CircleShape)
-                    .clickable { portraitLauncher.launch("image/*") },
-                contentAlignment = Alignment.Center
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.spacedBy(14.dp)
             ) {
-                if (portraitBitmap != null) {
-                    Image(
-                        bitmap = portraitBitmap,
-                        contentDescription = character.name + " portrait",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
+                Box(
+                    modifier = Modifier
+                        .size(width = 92.dp, height = 116.dp)
+                        .clickable { portraitLauncher.launch("image/*") }
+                ) {
+                    if (portraitBitmap != null) {
+                        Image(
+                            bitmap = portraitBitmap,
+                            contentDescription = character.name + " portrait",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(14.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Card(
+                            modifier = Modifier.fillMaxSize(),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = CardDefaults.cardColors(containerColor = theme.surfaceDeep),
+                            border = BorderStroke(1.dp, theme.accentSoft)
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Icon(
+                                    Icons.Outlined.AddAPhoto,
+                                    contentDescription = "Add character image",
+                                    tint = theme.accent
+                                )
+                                Text(
+                                    "Add portrait",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = theme.bodyColor
+                                )
+                            }
+                        }
+                    }
+
                     Card(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .size(30.dp),
                         shape = CircleShape,
                         colors = CardDefaults.cardColors(containerColor = theme.surfaceDeep),
-                        border = BorderStroke(1.dp, theme.accentSoft)
+                        border = BorderStroke(1.dp, theme.accent)
                     ) {
-                        Column(
+                        Box(
                             modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 Icons.Outlined.AddAPhoto,
-                                contentDescription = "Add character image",
-                                tint = theme.accent
-                            )
-                            Text(
-                                "Add",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = theme.bodyColor
+                                contentDescription = "Change portrait",
+                                tint = theme.accent,
+                                modifier = Modifier.size(16.dp)
                             )
                         }
                     }
                 }
-            }
 
-            Column(Modifier.weight(1f)) {
-                Text(
-                    character.name,
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = theme.titleColor
-                )
-                Text(
-                    character.contentProfileName,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = theme.bodyColor
-                )
-                Spacer(Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        "Tracked completion",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = theme.accent
+                        character.name,
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = theme.titleColor
                     )
                     Text(
-                        "$percentage% · $completed/$total",
-                        style = MaterialTheme.typography.labelMedium,
+                        character.contentProfileName,
+                        style = MaterialTheme.typography.bodySmall,
                         color = theme.bodyColor
                     )
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        "$percentage% complete",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = theme.accent,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        "$completed of $total tracked quests",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = theme.bodyColor
+                    )
+                    LinearProgressIndicator(
+                        progress = { percentage / 100f },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 4.dp),
+                        color = theme.accent,
+                        trackColor = theme.surfaceDeep
+                    )
                 }
-                LinearProgressIndicator(
-                    progress = { percentage / 100f },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 5.dp),
-                    color = theme.accent,
-                    trackColor = theme.surfaceDeep
-                )
-                Text(
-                    if (portraitBitmap == null) "Tap the portrait to add your character" else "Tap portrait to change image",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = theme.bodyColor
-                )
             }
 
-            TextButton(onClick = onCharacters) {
-                Icon(Icons.Outlined.People, contentDescription = null)
-                Text("Switch")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                TextButton(onClick = { portraitLauncher.launch("image/*") }) {
+                    Icon(Icons.Outlined.AddAPhoto, contentDescription = null)
+                    Text("Change portrait")
+                }
+                TextButton(onClick = onCharacters) {
+                    Icon(Icons.Outlined.People, contentDescription = null)
+                    Text("Switch character")
+                }
             }
         }
     }
