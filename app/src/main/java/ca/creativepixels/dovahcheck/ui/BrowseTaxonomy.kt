@@ -99,8 +99,7 @@ object BrowseTaxonomy {
         QuestCategory(
             id = "collections",
             title = "Collections",
-            subtitle = "Shouts, artifacts, masks, stones and more",
-            collectionsPlaceholder = true
+            subtitle = "Shouts, artifacts, masks, stones and more"
         )
     )
 
