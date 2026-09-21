@@ -144,6 +144,16 @@ private val Dragonborn = LedgerVisualTheme(
     assetKey = "dlc_dragonborn"
 )
 
+private val DragonbornMain = LedgerVisualTheme(
+    key = "dragonborn_main",
+    eyebrow = "FIRST DRAGONBORN",
+    accent = Color(0xFFB7B0D5),
+    accentSoft = Color(0xFF625B7D),
+    surface = Color(0xFF211F2A),
+    surfaceDeep = Color(0xFF0B0A10),
+    assetKey = "dlc_dragonborn_miraak"
+)
+
 private val Hearthfire = LedgerVisualTheme(
     key = "hearthfire",
     eyebrow = "HEARTHFIRE",
@@ -182,7 +192,7 @@ private val GuildsCategory = LedgerVisualTheme(
     accentSoft = Color(0xFF6A5B3C),
     surface = Color(0xFF25231E),
     surfaceDeep = Color(0xFF11100D),
-    assetKey = null
+    assetKey = "guilds_category"
 )
 
 private val HoldsCategory = LedgerVisualTheme(
@@ -260,6 +270,10 @@ fun themeForRelease(release: String): LedgerVisualTheme = when (release) {
 
 fun themeForSection(release: String, section: String): LedgerVisualTheme {
     HoldThemes[section]?.let { return it }
+
+    if (release == "Dragonborn" && section == "Main Quest") {
+        return DragonbornMain
+    }
 
     if (release != "Base Game") {
         return themeForRelease(release)
