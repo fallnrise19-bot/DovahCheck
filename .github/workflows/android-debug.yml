@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 concurrency:
-  group: android-debug-${{ github.ref }}
+  group: android-debug-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
