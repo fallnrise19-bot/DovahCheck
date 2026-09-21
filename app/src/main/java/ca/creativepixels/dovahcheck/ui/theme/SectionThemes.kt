@@ -14,6 +14,16 @@ data class LedgerVisualTheme(
     val assetKey: String? = null
 )
 
+private val Home = LedgerVisualTheme(
+    key = "home",
+    eyebrow = "DRAGONBORN",
+    accent = Color(0xFFC4D1D8),
+    accentSoft = Color(0xFF657782),
+    surface = Color(0xFF252A2E),
+    surfaceDeep = Color(0xFF111416),
+    assetKey = "category_holds"
+)
+
 private val Nordic = LedgerVisualTheme(
     key = "nordic",
     eyebrow = "DRAGONBORN",
@@ -224,6 +234,8 @@ private val HoldThemes = mapOf(
     "The Pale" to hold("pale", "THE PALE", 0xFFC7D2D8, 0xFF6B7B83, 0xFF232A2E, 0xFF0C1012, "hold_dawnstar"),
     "Winterhold" to hold("winterhold", "WINTERHOLD", 0xFFB3D1DE, 0xFF557486, 0xFF1E2930, 0xFF0A1115, "hold_winterhold")
 )
+
+fun themeForHome(): LedgerVisualTheme = Home
 
 fun themeForCategory(categoryId: String): LedgerVisualTheme = when (categoryId) {
     "main-story" -> Nordic
