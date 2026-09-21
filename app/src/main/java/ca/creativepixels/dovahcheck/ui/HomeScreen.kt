@@ -47,6 +47,7 @@ import ca.creativepixels.dovahcheck.data.model.QuestState
 import ca.creativepixels.dovahcheck.data.model.ShoutRecord
 import ca.creativepixels.dovahcheck.ui.theme.LedgerVisualTheme
 import ca.creativepixels.dovahcheck.ui.theme.themeForCategory
+import ca.creativepixels.dovahcheck.ui.theme.themeForHome
 import ca.creativepixels.dovahcheck.ui.theme.themeForSection
 
 @Composable
@@ -70,7 +71,7 @@ fun HomeScreen(
     val activeQuests = quests.filter {
         progress[it.internalKey] == QuestState.ACTIVE && !it.isExcludedFromCompletion()
     }.take(3)
-    val theme = themeForSection("Base Game", "Main Quest")
+    val theme = themeForHome()
 
     Scaffold(
         bottomBar = {
@@ -490,39 +491,13 @@ private fun DashboardShortcut(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    Card(
-        modifier = modifier
-            .height(118.dp)
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = theme.surface),
-        border = BorderStroke(1.dp, theme.accentSoft)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(14.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                theme.eyebrow,
-                style = MaterialTheme.typography.labelSmall,
-                color = theme.accent
-            )
-            Column {
-                Text(
-                    title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = theme.titleColor
-                )
-                Text(
-                    subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = theme.bodyColor
-                )
-            }
-        }
-    }
+    LedgerArtworkTile(
+        title = title,
+        subtitle = subtitle,
+        theme = theme,
+        modifier = modifier,
+        onClick = onClick
+    )
 }
 
 private fun categoryProgress(

@@ -14,6 +14,16 @@ data class LedgerVisualTheme(
     val assetKey: String? = null
 )
 
+private val Home = LedgerVisualTheme(
+    key = "home",
+    eyebrow = "DRAGONBORN",
+    accent = Color(0xFFC4D1D8),
+    accentSoft = Color(0xFF657782),
+    surface = Color(0xFF252A2E),
+    surfaceDeep = Color(0xFF111416),
+    assetKey = "category_holds"
+)
+
 private val Nordic = LedgerVisualTheme(
     key = "nordic",
     eyebrow = "DRAGONBORN",
@@ -41,7 +51,7 @@ private val College = LedgerVisualTheme(
     accentSoft = Color(0xFF4B6A80),
     surface = Color(0xFF18232C),
     surfaceDeep = Color(0xFF0A1117),
-    assetKey = "faction_college"
+    assetKey = "faction_college_winterhold"
 )
 
 private val Thieves = LedgerVisualTheme(
@@ -164,6 +174,27 @@ private val SideQuest = LedgerVisualTheme(
     assetKey = "theme_side_quests"
 )
 
+
+private val GuildsCategory = LedgerVisualTheme(
+    key = "guilds_category",
+    eyebrow = "GUILDS & FACTIONS",
+    accent = Color(0xFFB9A57A),
+    accentSoft = Color(0xFF6A5B3C),
+    surface = Color(0xFF25231E),
+    surfaceDeep = Color(0xFF11100D),
+    assetKey = null
+)
+
+private val HoldsCategory = LedgerVisualTheme(
+    key = "holds_category",
+    eyebrow = "THE HOLDS",
+    accent = Color(0xFFD0B878),
+    accentSoft = Color(0xFF75613B),
+    surface = Color(0xFF29251D),
+    surfaceDeep = Color(0xFF11100C),
+    assetKey = "category_holds"
+)
+
 private val Collections = LedgerVisualTheme(
     key = "collections",
     eyebrow = "COLLECTIONS",
@@ -171,7 +202,7 @@ private val Collections = LedgerVisualTheme(
     accentSoft = Color(0xFF52665A),
     surface = Color(0xFF202923),
     surfaceDeep = Color(0xFF0D120F),
-    assetKey = "theme_collections"
+    assetKey = "category_collections"
 )
 
 private fun hold(
@@ -194,20 +225,22 @@ private fun hold(
 
 private val HoldThemes = mapOf(
     "Whiterun" to hold("whiterun", "WHITERUN HOLD", 0xFFD0B878, 0xFF75613B, 0xFF302B20, 0xFF15120D, "hold_whiterun"),
-    "The Rift" to hold("rift", "THE RIFT", 0xFFC28B63, 0xFF75503B, 0xFF30231D, 0xFF150E0A, "hold_rift"),
-    "The Reach" to hold("reach", "THE REACH", 0xFFAAB0A6, 0xFF5D665C, 0xFF252925, 0xFF10120F, "hold_reach"),
-    "Haafingar" to hold("haafingar", "HAAFINGAR", 0xFFD1BF91, 0xFF756A4B, 0xFF2F2A22, 0xFF15120E, "hold_haafingar"),
-    "Eastmarch" to hold("eastmarch", "EASTMARCH", 0xFF9EBAC6, 0xFF4C6975, 0xFF202A2F, 0xFF0C1215, "hold_eastmarch"),
+    "The Rift" to hold("rift", "THE RIFT", 0xFFC28B63, 0xFF75503B, 0xFF30231D, 0xFF150E0A, "hold_riften"),
+    "The Reach" to hold("reach", "THE REACH", 0xFFAAB0A6, 0xFF5D665C, 0xFF252925, 0xFF10120F, "hold_markarth"),
+    "Haafingar" to hold("haafingar", "HAAFINGAR", 0xFFD1BF91, 0xFF756A4B, 0xFF2F2A22, 0xFF15120E, "category_holds"),
+    "Eastmarch" to hold("eastmarch", "EASTMARCH", 0xFF9EBAC6, 0xFF4C6975, 0xFF202A2F, 0xFF0C1215, "hold_windhelm"),
     "Falkreath Hold" to hold("falkreath", "FALKREATH HOLD", 0xFF91AD83, 0xFF4F6746, 0xFF20281E, 0xFF0C110B, "hold_falkreath"),
-    "Hjaalmarch" to hold("hjaalmarch", "HJAALMARCH", 0xFF9FA6A8, 0xFF555D60, 0xFF24282A, 0xFF0E1112, "hold_hjaalmarch"),
-    "The Pale" to hold("pale", "THE PALE", 0xFFC7D2D8, 0xFF6B7B83, 0xFF232A2E, 0xFF0C1012, "hold_pale"),
+    "Hjaalmarch" to hold("hjaalmarch", "HJAALMARCH", 0xFF9FA6A8, 0xFF555D60, 0xFF24282A, 0xFF0E1112, "hold_morthal"),
+    "The Pale" to hold("pale", "THE PALE", 0xFFC7D2D8, 0xFF6B7B83, 0xFF232A2E, 0xFF0C1012, "hold_dawnstar"),
     "Winterhold" to hold("winterhold", "WINTERHOLD", 0xFFB3D1DE, 0xFF557486, 0xFF1E2930, 0xFF0A1115, "hold_winterhold")
 )
 
+fun themeForHome(): LedgerVisualTheme = Home
+
 fun themeForCategory(categoryId: String): LedgerVisualTheme = when (categoryId) {
     "main-story" -> Nordic
-    "guilds" -> Thieves
-    "holds" -> HoldThemes.getValue("Whiterun")
+    "guilds" -> GuildsCategory
+    "holds" -> HoldsCategory
     "daedric" -> Daedric
     "civil-war" -> Imperial
     "side-quests" -> SideQuest
