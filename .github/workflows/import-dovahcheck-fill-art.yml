@@ -1,4 +1,4 @@
-name: Import DovahCheck Fill Artwork
+name: Derive DovahCheck Companion Artwork
 
 on:
   push:
@@ -8,8 +8,8 @@ permissions:
   contents: write
 
 jobs:
-  import-art:
-    if: "!contains(github.event.head_commit.message, '[asset-fill]')"
+  derive-art:
+    if: "!contains(github.event.head_commit.message, '[companion-crop]')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout asset branch
@@ -20,44 +20,34 @@ jobs:
       - name: Install image tooling
         run: python -m pip install --quiet pillow
 
-      - name: Download new artwork
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p /tmp/dovah-fill app/src/main/res/drawable-nodpi
-
-          curl -L --fail --retry 2 -o /tmp/dovah-fill/guilds_category.png 'https://sdmntprcentralus.oaiusercontent.com/files/00000000-4204-81f5-8b30-26866377116a/raw?se=2026-09-21T04%3A20%3A31Z&sp=r&sv=2026-02-06&sr=b&scid=fa5354a9-e206-549c-a90a-6226a01321cd&skoid=d1cabc79-3240-4866-94fe-6005330cb49e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-21T03%3A13%3A14Z&ske=2026-09-22T03%3A13%3A14Z&sks=b&skv=2026-02-06&sig=qGh3e3bBKg8Z7N0RqOHwS5MXubSH93Yn9gBzvXoaQgw%3D'
-          curl -L --fail --retry 2 -o /tmp/dovah-fill/faction_bards_college.png 'https://sdmntprcentralus.oaiusercontent.com/files/00000000-24e8-81f5-9e86-c8976e5219ad/raw?se=2026-09-21T04%3A20%3A32Z&sp=r&sv=2026-02-06&sr=b&scid=01128cb5-be4a-50e4-b9ee-5ec4d84baab8&skoid=d1cabc79-3240-4866-94fe-6005330cb49e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-21T04%3A13%3A12Z&ske=2026-09-22T04%3A13%3A12Z&sks=b&skv=2026-02-06&sig=Fy16Tznlq%2BmXRdOG4xUDwiBSBG0kzM1ioWveynai0rg%3D'
-          curl -L --fail --retry 2 -o /tmp/dovah-fill/dlc_dragonborn_miraak.webp 'https://sdmntprcentralus.oaiusercontent.com/files/00000000-a730-81f5-b8d4-66a39bd59f05/raw?se=2026-09-21T04%3A20%3A33Z&sp=r&sv=2026-02-06&sr=b&scid=11d9ee63-03f6-528c-ad60-2679234ea938&skoid=d1cabc79-3240-4866-94fe-6005330cb49e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-20T12%3A32%3A05Z&ske=2026-09-21T12%3A32%3A05Z&sks=b&skv=2026-02-06&sig=porWXGDHMR7JYX6CqouqSzBOxz4Hk3N0Q7j3mmO2Ye8%3D'
-
-      - name: Optimize artwork for Android
+      - name: Derive Companions card from Guilds artwork
         shell: bash
         run: |
           python - <<'PY'
           from PIL import Image
           from pathlib import Path
 
-          src = Path('/tmp/dovah-fill')
-          dst = Path('app/src/main/res/drawable-nodpi')
-          dst.mkdir(parents=True, exist_ok=True)
+          src = Path('app/src/main/res/drawable-nodpi/guilds_category.webp')
+          out = Path('app/src/main/res/drawable-nodpi/faction_companions.webp')
 
-          for path in src.iterdir():
-              im = Image.open(path).convert('RGB')
-              im.thumbnail((900, 1100), Image.Resampling.LANCZOS)
-              out = dst / (path.stem + '.webp')
-              im.save(out, 'WEBP', quality=76, method=6)
-              print(path.name, '->', out, out.stat().st_size)
+          im = Image.open(src).convert('RGB')
+          w, h = im.size
+          # Left-side crop centers the Companions banner while preserving Skyrim scenery.
+          crop = im.crop((0, 0, int(w * 0.34), h))
+          crop = crop.resize((520, 900), Image.Resampling.LANCZOS)
+          crop.save(out, 'WEBP', quality=78, method=6)
+          print(out, out.stat().st_size)
           PY
 
-      - name: Commit optimized artwork
+      - name: Commit derived artwork
         shell: bash
         run: |
           git config user.name "DovahCheck Asset Bot"
           git config user.email "actions@users.noreply.github.com"
-          git add app/src/main/res/drawable-nodpi
+          git add app/src/main/res/drawable-nodpi/faction_companions.webp
           if git diff --cached --quiet; then
             echo "No asset changes."
             exit 0
           fi
-          git commit -m "[asset-fill] Add guilds, bards and Miraak artwork"
+          git commit -m "[companion-crop] Add Companions artwork"
           git push origin HEAD:asset-fill-pass
