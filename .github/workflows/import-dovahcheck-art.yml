@@ -1,0 +1,76 @@
+name: Import DovahCheck Artwork
+
+on:
+  push:
+    branches: [ asset-artwork-pass ]
+
+permissions:
+  contents: write
+
+jobs:
+  import-art:
+    if: "!contains(github.event.head_commit.message, '[asset-import]')"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout asset branch
+        uses: actions/checkout@v4
+        with:
+          ref: asset-artwork-pass
+
+      - name: Install image tooling
+        run: python -m pip install --quiet pillow
+
+      - name: Download source artwork
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/dovah-art app/src/main/res/drawable-nodpi
+
+          curl -L --fail --retry 2 -o /tmp/dovah-art/category_holds.png 'https://sdmntprcentralus.oaiusercontent.com/files/00000000-e9d4-81f5-a7ad-2d05aeb30474/raw?se=2026-09-21T03%3A42%3A15Z&sp=r&sv=2026-02-06&sr=b&scid=9458b023-1422-546e-ab46-6cd6162373a3&skoid=d1cabc79-3240-4866-94fe-6005330cb49e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-21T00%3A49%3A50Z&ske=2026-09-22T00%3A49%3A50Z&sks=b&skv=2026-02-06&sig=pe2Z4kmYs5L3fMZjQ1Vnr9b8eyHKSg3ROynSgG/4hHg%3D'
+          curl -L --fail --retry 2 -o /tmp/dovah-art/category_collections.png 'https://sdmntprcentralus.oaiusercontent.com/files/00000000-90c0-81f5-a3c3-a284060b2f19/raw?se=2026-09-21T03%3A42%3A16Z&sp=r&sv=2026-02-06&sr=b&scid=5d36df8c-a3bd-5798-b00c-33a734188f33&skoid=d1cabc79-3240-4866-94fe-6005330cb49e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-20T12%3A32%3A05Z&ske=2026-09-21T12%3A32%3A05Z&sks=b&skv=2026-02-06&sig=WnHRvyZFgHlOkxtc%2B/0QmFg8YjC1sP6cVCoKLunAR8M%3D'
+          curl -L --fail --retry 2 -o /tmp/dovah-art/dlc_dragonborn.png 'https://sdmntprcentralus.oaiusercontent.com/files/00000000-73dc-81f5-88d9-138a23cded87/raw?se=2026-09-21T03%3A42%3A17Z&sp=r&sv=2026-02-06&sr=b&scid=f9628ec2-b7c1-5611-be41-61cd34fa60ab&skoid=d1cabc79-3240-4866-94fe-6005330cb49e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-20T12%3A32%3A05Z&ske=2026-09-21T12%3A32%3A05Z&sks=b&skv=2026-02-06&sig=Z%2BK5%2BcXPhRli8Pfpqx8uEC2ynK5k%2Bo/GVVUIkQeEgrE%3D'
+          curl -L --fail --retry 2 -o /tmp/dovah-art/faction_thieves_guild.png 'https://sdmntprcentralus.oaiusercontent.com/files/00000000-244c-81f5-8b7c-7548407e9ceb/raw?se=2026-09-21T03%3A42%3A18Z&sp=r&sv=2026-02-06&sr=b&scid=3baa752a-60dc-5f7c-975b-e932e208213b&skoid=d1cabc79-3240-4866-94fe-6005330cb49e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-20T18%3A20%3A03Z&ske=2026-09-21T18%3A20%3A03Z&sks=b&skv=2026-02-06&sig=lIb8LLCbOo0/jhU/2%2BbQKDYkuye3JpMlnUWSdtJjtE8%3D'
+          curl -L --fail --retry 2 -o /tmp/dovah-art/faction_dark_brotherhood.png 'https://sdmntprcentralus.oaiusercontent.com/files/00000000-6244-81f5-a323-d49c070bf594/raw?se=2026-09-21T03%3A42%3A20Z&sp=r&sv=2026-02-06&sr=b&scid=8b788c51-c624-571c-aaa2-c6b28947749c&skoid=d1cabc79-3240-4866-94fe-6005330cb49e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-20T15%3A17%3A09Z&ske=2026-09-21T15%3A17%3A09Z&sks=b&skv=2026-02-06&sig=x2THOIEls1YilCoMPtbX8iOHLiRn6mICq1i4taSIfLE%3D'
+          curl -L --fail --retry 2 -o /tmp/dovah-art/faction_college_winterhold.png 'https://sdmntprcentralus.oaiusercontent.com/files/00000000-7d60-81f5-8951-a0e8c93fc217/raw?se=2026-09-21T03%3A42%3A21Z&sp=r&sv=2026-02-06&sr=b&scid=ac392ae0-17b8-5e25-aed5-769616b7fe1e&skoid=d1cabc79-3240-4866-94fe-6005330cb49e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-20T16%3A39%3A03Z&ske=2026-09-21T16%3A39%3A03Z&sks=b&skv=2026-02-06&sig=43H4P/JcXEcq%2BcITaTlGZa6vz8aaKitCGaFyQB25fa8%3D'
+          curl -L --fail --retry 2 -o /tmp/dovah-art/hold_morthal.png 'https://sdmntprcentralus.oaiusercontent.com/files/00000000-59e8-81f5-9ea2-f1e3999174c3/raw?se=2026-09-21T03%3A42%3A22Z&sp=r&sv=2026-02-06&sr=b&scid=641f8847-e802-53f1-9b3d-179216b1f1c1&skoid=d1cabc79-3240-4866-94fe-6005330cb49e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-20T10%3A12%3A37Z&ske=2026-09-21T10%3A12%3A37Z&sks=b&skv=2026-02-06&sig=hIsCsa4ncdIVLP%2BT30bPjpden8f%2BnPK%2BI/izirOrj/I%3D'
+          curl -L --fail --retry 2 -o /tmp/dovah-art/hold_whiterun.png 'https://sdmntprcentralus.oaiusercontent.com/files/00000000-cf08-81f5-b510-93913d81dff8/raw?se=2026-09-21T03%3A42%3A23Z&sp=r&sv=2026-02-06&sr=b&scid=244f86f6-ce3d-5372-b963-d6e1ef4c321c&skoid=d1cabc79-3240-4866-94fe-6005330cb49e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-20T14%3A31%3A51Z&ske=2026-09-21T14%3A31%3A51Z&sks=b&skv=2026-02-06&sig=AeeO2/QIlI0liurqjpwb%2BlqK0S8u/zZB2k5HPDCiWDc%3D'
+          curl -L --fail --retry 2 -o /tmp/dovah-art/hold_winterhold.png 'https://sdmntprcentralus.oaiusercontent.com/files/00000000-9cc4-81f5-8f6c-af50ee195f7e/raw?se=2026-09-21T03%3A42%3A25Z&sp=r&sv=2026-02-06&sr=b&scid=ce337dc1-bdd1-510d-b737-022b61939616&skoid=d1cabc79-3240-4866-94fe-6005330cb49e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-20T14%3A31%3A51Z&ske=2026-09-21T14%3A31%3A51Z&sks=b&skv=2026-02-06&sig=Z/6MCJlTuQY%2BXNQOllduxLE%2B%2BUS9YZzs/gSh01xT8pk%3D'
+          curl -L --fail --retry 2 -o /tmp/dovah-art/hold_markarth.png 'https://sdmntprcentralus.oaiusercontent.com/files/00000000-f550-81f5-bd7b-a7c2d23f9e59/raw?se=2026-09-21T03%3A42%3A26Z&sp=r&sv=2026-02-06&sr=b&scid=65733249-2730-5245-b658-dffa72c4080d&skoid=d1cabc79-3240-4866-94fe-6005330cb49e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-20T15%3A17%3A08Z&ske=2026-09-21T15%3A17%3A08Z&sks=b&skv=2026-02-06&sig=PxPTQI1tzsjYozaojanqIxOW8NkwXvTgQDEnxo52/YQ%3D'
+          curl -L --fail --retry 2 -o /tmp/dovah-art/hold_riften.png 'https://sdmntprcentralus.oaiusercontent.com/files/00000000-f234-81f5-9fda-9ffce72baffc/raw?se=2026-09-21T03%3A42%3A27Z&sp=r&sv=2026-02-06&sr=b&scid=357ef91f-a870-57f2-b52f-396cd8b0c11d&skoid=d1cabc79-3240-4866-94fe-6005330cb49e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-21T01%3A07%3A41Z&ske=2026-09-22T01%3A07%3A41Z&sks=b&skv=2026-02-06&sig=ngH6qg7u7uf78RAFIAr7Jj0Cx/hRp/BFJyVTWohzc/o%3D'
+          curl -L --fail --retry 2 -o /tmp/dovah-art/hold_dawnstar.png 'https://sdmntprcentralus.oaiusercontent.com/files/00000000-3130-81f5-9a56-2437bd9afc72/raw?se=2026-09-21T03%3A42%3A28Z&sp=r&sv=2026-02-06&sr=b&scid=25331f66-454a-50c4-a3a9-a3f482f4354a&skoid=d1cabc79-3240-4866-94fe-6005330cb49e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-20T14%3A31%3A51Z&ske=2026-09-21T14%3A31%3A51Z&sks=b&skv=2026-02-06&sig=7qeckW1KFHi4bfuN5hNgz0Nxy6rb4rtPreKsCjU5Iak%3D'
+          curl -L --fail --retry 2 -o /tmp/dovah-art/hold_windhelm.png 'https://sdmntprcentralus.oaiusercontent.com/files/00000000-66a0-81f5-9350-cdcd8c7984c5/raw?se=2026-09-21T03%3A42%3A29Z&sp=r&sv=2026-02-06&sr=b&scid=44799734-3150-53d9-ac0c-a9ed2204f66e&skoid=d1cabc79-3240-4866-94fe-6005330cb49e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-20T13%3A49%3A54Z&ske=2026-09-21T13%3A49%3A54Z&sks=b&skv=2026-02-06&sig=fNylMfuwYPqfx9Ixn%2BjIUr%2B0CcJkIxM1gmcFtxbLmTU%3D'
+          curl -L --fail --retry 2 -o /tmp/dovah-art/hold_falkreath.jpg 'https://sdmntprcentralus.oaiusercontent.com/files/00000000-0820-81f5-adcb-d0111eb72e2a/raw?se=2026-09-21T03%3A42%3A30Z&sp=r&sv=2026-02-06&sr=b&scid=e0c70aa3-903e-5f03-9a9b-4750b28814c7&skoid=d1cabc79-3240-4866-94fe-6005330cb49e&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-09-20T16%3A39%3A02Z&ske=2026-09-21T16%3A39%3A02Z&sks=b&skv=2026-02-06&sig=RV0HxsQSiJU9/4uVPJ4bLOyrKSF1BBeZ/1SR%2B%2BmQMJM%3D'
+
+      - name: Optimize artwork for Android
+        shell: bash
+        run: |
+          python - <<'PY'
+          from PIL import Image
+          from pathlib import Path
+
+          src = Path('/tmp/dovah-art')
+          dst = Path('app/src/main/res/drawable-nodpi')
+          dst.mkdir(parents=True, exist_ok=True)
+
+          for path in src.iterdir():
+              if not path.is_file():
+                  continue
+              im = Image.open(path).convert('RGB')
+              im.thumbnail((900, 1100), Image.Resampling.LANCZOS)
+              out = dst / (path.stem + '.webp')
+              im.save(out, 'WEBP', quality=74, method=6)
+              print(path.name, '->', out, out.stat().st_size)
+          PY
+
+      - name: Commit optimized artwork
+        shell: bash
+        run: |
+          git config user.name "DovahCheck Asset Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add app/src/main/res/drawable-nodpi
+          if git diff --cached --quiet; then
+            echo "No asset changes."
+            exit 0
+          fi
+          git commit -m "[asset-import] Add optimized DovahCheck artwork"
+          git push origin HEAD:asset-artwork-pass
